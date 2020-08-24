@@ -28,6 +28,7 @@ public class MultiplicationServiceTest {
         multiplicationServiceImpl = new MultiplicationServiceImpl(randomGeneratorService);
     }
 
+    // Este test actualmente no pasa luego de implementar lombok
     @Test
     public void createRandomMultiplicationTest() {
         given(randomGeneratorService.generateRandomFactor()).willReturn(50, 30);

@@ -40,6 +40,7 @@ public class MultiplicationServiceTest {
         assertThat(multiplication.getResultado()).isEqualTo(1500);
     }
 
+    //Este test sí pasa
     @Test
     public void checkCorrectAttemptTest() {
         //given

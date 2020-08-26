@@ -20,7 +20,7 @@ public class MultiplicationServiceImpl implements MultiplicationService {
     public Multiplication createRandomMultiplication() {
         int factorA = randomGeneratorService.generateRandomFactor();
         int factorB = randomGeneratorService.generateRandomFactor();
-        return new Multiplication(factorA,factorB);
+        return new Multiplication(factorA, factorB);
     }
 
     /**
@@ -31,6 +31,8 @@ public class MultiplicationServiceImpl implements MultiplicationService {
      */
     @Override
     public boolean checkAttempt(MultiplicationResultAttempt multiplicationResultAttempt) {
-        return false;
+        return multiplicationResultAttempt.getResultAttempt() == multiplicationResultAttempt.getMultiplication().getFactorA() * multiplicationResultAttempt.getMultiplication().getFactorB();
+
+
     }
 }

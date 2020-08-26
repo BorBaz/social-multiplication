@@ -40,7 +40,6 @@ public class MultiplicationServiceTest {
         assertThat(multiplication.getResultado()).isEqualTo(1500);
     }
 
-    //Este test sí pasa
     @Test
     public void checkCorrectAttemptTest() {
         //given
@@ -50,7 +49,8 @@ public class MultiplicationServiceTest {
 
         //when
         boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
-        //
+
+        //40
         assertThat(attemptResult).isTrue();
     }
 

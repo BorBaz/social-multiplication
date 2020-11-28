@@ -13,7 +13,6 @@ public interface MultiplicationService {
     Multiplication createRandomMultiplication();
 
     /**
-     *
      * @param multiplicationResultAttempt
      * @return true si el el intento matches con la multiplicación
      */

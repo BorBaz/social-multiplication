@@ -40,7 +40,12 @@ $(document).ready(function () {
         let userAlias = $form.find("input[name='user-alias']").val();
 
         // Preparamos la información conforme a como lo espera nuestra API
-        let data = {user: {alias: userAlias}, multiplication: {factorA: a, factorB: b}, resultAttempt: attempt};
+        let data = {
+            user: {alias: userAlias},
+            multiplication: {factorA: a, factorB: b},
+            resultAttempt: attempt,
+            correct: false
+        };
 
         // enviamos a la API
 

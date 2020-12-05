@@ -14,9 +14,23 @@ function updateMultiplication() {
         // Get un Multiplication random y lo introducimos en la capa de presentacion
         $factorA.empty().append(data.factorA);
         $factorB.empty().append(data.factorB);
-
-        console.log("Entro");
     });
+}
+
+function updateStats(alias) {
+    $.ajax({
+        url: "http://localhost:8085/results?alias=" + alias,
+    }).then(function (data) {
+        $('#stats-body').empty();
+        data.forEach(function (row) {
+            $('#stats-body').append('<tr>' +
+                '<td>' + row.id + '</td>' +
+                '<td>' + row.multiplication.factorA + ' X ' + row.multiplication.factorB + '</td>' +
+                '<td>' + row.resultAttempt + '</td>' +
+                '<td>' + (row.correct === true ? 'SI' : 'NO') + '</td>' +
+                '</tr>');
+        })
+    })
 }
 
 $(document).ready(function () {
@@ -63,9 +77,7 @@ $(document).ready(function () {
                 }
             }
         })
-
         updateMultiplication();
-
+        updateStats(userAlias);
     })
-
 })

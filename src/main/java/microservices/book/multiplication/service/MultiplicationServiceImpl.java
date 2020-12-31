@@ -4,6 +4,8 @@ package microservices.book.multiplication.service;
 import microservices.book.multiplication.domain.Multiplication;
 import microservices.book.multiplication.domain.MultiplicationResultAttempt;
 import microservices.book.multiplication.domain.User;
+import microservices.book.multiplication.event.EventDispatcher;
+import microservices.book.multiplication.event.MultiplicationSolvedEvent;
 import microservices.book.multiplication.repository.MultiplicationRepository;
 import microservices.book.multiplication.repository.MultiplicationResultAttemptRepository;
 import microservices.book.multiplication.repository.UserRepository;
@@ -21,13 +23,15 @@ public class MultiplicationServiceImpl implements MultiplicationService {
     private MultiplicationResultAttemptRepository attemptRepository;
     private UserRepository userRepository;
     private MultiplicationRepository multiplicationRepository;
+    private EventDispatcher eventDispatcher;
 
     @Autowired
-    public MultiplicationServiceImpl(RandomGeneratorService randomGeneratorService, MultiplicationResultAttemptRepository attemptRepository, UserRepository userRepository, MultiplicationRepository multiplicationRepository) {
+    public MultiplicationServiceImpl(RandomGeneratorService randomGeneratorService, MultiplicationResultAttemptRepository attemptRepository, final UserRepository userRepository, final MultiplicationRepository multiplicationRepository, final EventDispatcher eventDispatcher) {
         this.randomGeneratorService = randomGeneratorService;
         this.userRepository = userRepository;
         this.attemptRepository = attemptRepository;
         this.multiplicationRepository = multiplicationRepository;
+        this.eventDispatcher = eventDispatcher;
     }
 
 
@@ -49,7 +53,7 @@ public class MultiplicationServiceImpl implements MultiplicationService {
 
         // Comprobamos que no existe un user ya para ese alias y una multiplication con estos factores
         Optional<User> user = userRepository.findByAlias(attempt.getUser().getAlias());
-        Optional<Multiplication> multiplication = multiplicationRepository.findByFactorAAndFactorB(attempt.getMultiplication().getFactorA(), attempt.getMultiplication().getFactorA());
+        Optional<Multiplication> multiplication = multiplicationRepository.findByFactorAAndFactorB(attempt.getMultiplication().getFactorA(), attempt.getMultiplication().getFactorB());
 
         // Evitamos intentos 'Hackeados', en caso de que no se cumpla esto, se lanza una RuntimeException
         Assert.isTrue(!attempt.isCorrect(), "No se puede enviar un intento marcado ya como correcto!");
@@ -62,6 +66,9 @@ public class MultiplicationServiceImpl implements MultiplicationService {
         // Persistimos el intento, algo importante a tener en cuenta es que como en la entidad hemos configurado @ManyToOne(cascade = CascadeType.PERSIST), cuando se persista en BBDD una de estas
         // entidades, también lo harán sus dependientes
         attemptRepository.save(checkedAttempt);
+
+        // Lanzamos el evento al Message Broker
+        eventDispatcher.send(new MultiplicationSolvedEvent(checkedAttempt.getId(), checkedAttempt.getUser().getId(), checkedAttempt.isCorrect()));
 
         return isCorrect;
     }
